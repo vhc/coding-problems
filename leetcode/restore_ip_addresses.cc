@@ -1,15 +1,27 @@
 #include <string>
+#include <iostream>
 #include <vector>
 
+#include <cstdio>
+
+#include "../common_utils.h"
+
 using namespace std;
+using namespace common_utils;
 
 class Solution {
 public:
 	vector<string> restoreIpAddresses(string s) {
+		const int REQUIRED_OCTETS = 4;
+		const int OCTET_MAX_LENGTH = 3;
+		const int OCTET_MIN_LENGTH = 1;
+
 		vector<string> all_ips;
-		const int start_level = 0;
-		const int stop_level = 4;
-		helper(s, start_level, stop_level, all_ips, "", 0);
+		if (s.size() >= REQUIRED_OCTETS * OCTET_MIN_LENGTH && s.size() <= REQUIRED_OCTETS * OCTET_MAX_LENGTH) {
+			const int start_level = 0;
+			const int stop_level = 4;
+			helper(s, start_level, stop_level, all_ips, "", 0);
+		}
 		return all_ips;
 	}
 
@@ -28,12 +40,12 @@ private:
 			all_ips.push_back(ip_so_far);
 			return;
 		}
-		
+
 		for (int octet_len = 1; octet_len <= 3; octet_len += 1) {
-			if (octet_start_index + octet_len >= s.size()) {
+			if (octet_start_index + octet_len > s.size()) {
 				break;
 			}
-			
+
 			// Handle exceptions when string does not contain valid number
 			string octet = s.substr(octet_start_index, octet_len);
 			int value = stoi(octet);
@@ -53,7 +65,7 @@ private:
 			}
 		}
 	}
-	
+
 	bool is_valid_octet(const string& octet,
 						const int value)
 	{
@@ -72,3 +84,13 @@ private:
         return true;
 	}
 };
+
+int main() {
+	Solution sol;
+	string ip_string;
+	while (cin) {
+		cin >> ip_string;
+		print(sol.restoreIpAddresses(ip_string));
+	}
+	return 0;
+}
